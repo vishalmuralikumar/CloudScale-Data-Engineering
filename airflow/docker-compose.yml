@@ -1,0 +1,51 @@
+services:
+
+  airflow-init:
+    image: apache/airflow:3.0.6
+    container_name: cloudscale-airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://cloudscale:cloudscale_pass@cloudscale-postgres:5432/cloudscale
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    networks:
+      - cloudscale-network
+    command: >
+      bash -c "
+      airflow db migrate
+      "
+
+  airflow:
+    build: .
+    container_name: cloudscale-airflow
+    restart: unless-stopped
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://cloudscale:cloudscale_pass@cloudscale-postgres:5432/cloudscale
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ..:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./dbt_profiles:/home/airflow/.dbt
+    ports:
+      - "8082:8080"
+    networks:
+      - cloudscale-network
+    command: >
+      bash -c "
+      airflow standalone
+      "
+
+networks:
+  cloudscale-network:
+    external: true

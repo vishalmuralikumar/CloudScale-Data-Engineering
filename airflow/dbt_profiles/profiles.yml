@@ -1,0 +1,12 @@
+cloudscale_dbt:
+  outputs:
+    dev:
+      type: postgres
+      host: cloudscale-postgres
+      port: 5432
+      user: cloudscale
+      pass: cloudscale_pass
+      dbname: cloudscale
+      schema: analytics
+      threads: 4
+  target: dev

@@ -1,0 +1,21 @@
+[project]
+name = "cloudscale-data-engineering"
+version = "0.1.0"
+description = "End-to-end cloud data engineering and observability platform"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "dbt-core>=1.12.3",
+    "dbt-postgres>=1.11.0",
+    "kafka-python>=3.0.11",
+    "kaggle>=2.2.4",
+    "pandas>=3.0.5",
+    "psycopg2-binary>=2.9.12",
+    "psycopg[binary]>=3.3.5",
+    "pyspark>=4.2.0",
+    "python-dotenv>=1.2.3",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"

@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Cleaned and standardized orders data"
+
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order"
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: "Unique identifier for the customer"
+        tests:
+          - not_null
+
+      - name: order_status
+        description: "Current status of the order"
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - approved
+                - canceled
+                - created
+                - delivered
+                - invoiced
+                - processing
+                - shipped
+                - unavailable

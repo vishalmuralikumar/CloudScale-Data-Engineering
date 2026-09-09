@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+
+# Build / packaging
+build/
+dist/
+wheels/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# dbt
+cloudscale_dbt/target/
+cloudscale_dbt/dbt_packages/
+
+# Airflow
+airflow/logs/
+airflow/dbt_profiles/.user.yml
+
+# Generated Spark / Analytics data
+data/spark/
+data/analytics/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
