@@ -1,90 +1,98 @@
 # CloudScale — E-Commerce Data Engineering Platform
 
-An end-to-end E-Commerce Data Engineering platform built using modern data engineering, analytics engineering, orchestration, and business intelligence technologies.
+An end-to-end E-Commerce Data Engineering platform for data ingestion, processing, analytics, orchestration, business intelligence, and infrastructure monitoring.
 
 ---
 
-# Architecture
+## Project Architecture
 
 ```text
-                         ┌──────────────────────────┐
-                         │   E-Commerce Dataset     │
-                         │      Brazilian Olist     │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │      Apache Kafka        │
-                         │                          │
-                         │  Producer → Topic        │
-                         │  Topic: orders           │
-                         │  Partitions: 3           │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │       PostgreSQL         │
-                         │                          │
-                         │ Database: cloudscale     │
-                         │ Table: public.orders     │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │      Data Quality        │
-                         │                          │
-                         │ Validation               │
-                         │ Cleaning                 │
-                         │ Duplicate Checks         │
-                         │ Null Checks              │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │      Apache Spark        │
-                         │         PySpark          │
-                         │                          │
-                         │ Transformation           │
-                         │ Deduplication            │
-                         │ Timestamp Processing     │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │         Parquet          │
-                         │     Processed Data       │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │           dbt            │
-                         │                          │
-                         │ Staging                  │
-                         │ Silver                   │
-                         │ Gold                     │
-                         │ Incremental Models       │
-                         │ Snapshots / SCD Type 2   │
-                         │ Data Tests               │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │      Apache Airflow      │
-                         │                          │
-                         │ DAG Orchestration       │
-                         │ Scheduling               │
-                         │ Task Dependencies        │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │        Power BI          │
-                         │                          │
-                         │ Star Schema              │
-                         │ DAX Measures             │
-                         │ KPI Dashboards            │
-                         │ Operational Analytics     │
-                         └──────────────────────────┘
+                         E-COMMERCE DATA PLATFORM
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        DATA SOURCE                              │
+│                                                                 │
+│                 Brazilian Olist Dataset                        │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATA INGESTION                              │
+│                                                                 │
+│                     Apache Kafka                                │
+│                  Producer → orders topic                        │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        STORAGE                                  │
+│                                                                 │
+│                      PostgreSQL                                │
+│                    cloudscale database                          │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATA QUALITY                                │
+│                                                                 │
+│             Validation → Cleaning → Rejected Records            │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATA PROCESSING                             │
+│                                                                 │
+│                 Apache Spark / PySpark                          │
+│                         ↓                                       │
+│                       Parquet                                   │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  ANALYTICS ENGINEERING                          │
+│                                                                 │
+│                           dbt                                   │
+│              ┌──────────────┼──────────────┐                    │
+│              ▼              ▼              ▼                    │
+│           Staging         Gold        Incremental              │
+│                                             │                   │
+│                                             ▼                   │
+│                                         SCD Type 2              │
+│                                                                 │
+│                        dbt Tests                                │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      ORCHESTRATION                              │
+│                                                                 │
+│                     Apache Airflow                              │
+│                                                                 │
+│       Data Quality → Spark → dbt Run → dbt Test                 │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   BUSINESS INTELLIGENCE                         │
+│                                                                 │
+│                      Microsoft Power BI                         │
+│                                                                 │
+│             Star Schema → DAX → KPIs → Dashboards               │
+└─────────────────────────────────────────────────────────────────┘
+
+
+                    INFRASTRUCTURE MONITORING
+
+              Docker Containers / Services
+                         │
+                         ▼
+                     cAdvisor
+                         │
+                         ▼
+                    Prometheus
+                         │
+                         ▼
+                     Grafana
 ```
 
 ---
@@ -177,9 +185,14 @@ E-Commerce Dataset
 - Docker
 - Docker Compose
 - Docker Networking
+- cAdvisor
+- Prometheus
+- Grafana
+- Docker Networking
 - Git
 - GitHub
 - uv
+
 
 ---
 
@@ -309,8 +322,14 @@ CloudScale
 ├── Visualization
 │   └── Power BI
 │
+├── Monitoring
+│   ├── Prometheus
+│   ├── Grafana
+│   └── cAdvisor
+│
 └── Infrastructure
-    └── Docker
+    ├── Docker
+    └── Docker Compose
 ```
 
 ---
@@ -393,6 +412,27 @@ CloudScale
  │                     Power BI                               │
  │                                                            │
  │       Star Schema → DAX → KPIs → Dashboards                │
+ │                                                            │
+ └────────────────────────────────────────────────────────────┘
+
+
+                 INFRASTRUCTURE MONITORING
+
+ ┌────────────────────────────────────────────────────────────┐
+ │                    MONITORING                              │
+ │                                                            │
+ │                  Docker Containers                         │
+ │                         │                                  │
+ │                         ▼                                  │
+ │                      cAdvisor                              │
+ │                         │                                  │
+ │                         ▼                                  │
+ │                    Prometheus                              │
+ │                         │                                  │
+ │                         ▼                                  │
+ │                      Grafana                               │
+ │                                                            │
+ │          CPU → Memory → Network → Container Health         │
  │                                                            │
  └────────────────────────────────────────────────────────────┘
 ```
